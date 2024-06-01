@@ -1,23 +1,33 @@
-import './style.css';
+import { useState, useEffect } from "react";
+import "./style.css";
+import { Joke } from "../../Components/Joke/Joke";
 
 export const HomePage = () => {
+  const [jokes, setJokes] = useState([]);
+
+  useEffect(() => {
+    const fetchJokes = async () => {
+      const response = await fetch("http://localhost:4000/api/jokes");
+      const json = await response.json();
+      console.log(json.data);
+      setJokes(json.data);
+    };
+
+    fetchJokes();
+  }, []);
+
   return (
     <div className="container">
-      <header>
-        <div className="logo" />
-        <h1>React webová aplikace</h1>
-      </header>
-      <main>
-        <p>
-          Startovací šablona pro webovou aplikaci v Reactu. Vytvořeno pomocí
-          {" "}
-          <a href="https://www.npmjs.com/package/create-czechitas-app">create-czechitas-app</a>
-          .
-        </p>
-      </main>
-      <footer>
-        <p>Czechitas, Digitální akademie: Web</p>
-      </footer>
+      {jokes.map((joke) => (
+        <Joke
+          key={joke.id}
+          userAvatar={joke.avatar}
+          userName={joke.name}
+          text={joke.text}
+          likes={joke.likes}
+          dislikes={joke.dislikes}
+        />
+      ))}
     </div>
   );
 };
